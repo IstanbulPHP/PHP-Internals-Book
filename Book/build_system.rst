@@ -1,5 +1,5 @@
 PHP yapı sistemini kullanmak
-==========================
+============================
 
 Bu bölümde PHP yapı sistemini kullanarak PHP eklentilerini ve PHP'yi nasıl derleyeceğinizi anlatacağız.
 Henüz autoconf yapılandırma talimatları üzerinde durulmayacak, sadece araçların nasıl kullanılacağı
