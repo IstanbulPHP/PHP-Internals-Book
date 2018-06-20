@@ -16,7 +16,7 @@ Kod Stili
 Aşağıdaki kod stilleri yazı yazarken geçerlidir, kodlamalarda değil.
 
  * Düz yazılar için maksimum satır 120 karakter olmalıdır.
- * Kodlar için maksiumum satır 98 karkter olmalıdır. Girintilemeler olduğunda limit 102 karakter olabilir ancak PDF türetilirken hata çıkmaması için bu son limit.
+ * Kodlar için maksimum satır 98 karakter olmalıdır. Girintilemeler olduğunda limit 102 karakter olabilir ancak PDF türetilirken hata çıkmaması için bu son limit.
  * Girintileme 4 karakter boşluk olmalıdır.
  * Satırlarda whitespace olmamalıdır.
  * `?`, `!` veya `:` gibi noktalamalar kelimeden hemen sonra yazılmalıdır. (Örnek: `foo:` doğru kullanım, `foo :` yanlış kullanım).

@@ -111,36 +111,39 @@ tek seferde yükleyebilirsiniz. Sadece varsayılan yapılandırmayı istiyorsan�
 Yapılandırma önizlemesi
 -----------------------
 
-Before taking a closer look at what the individual build steps do, here are the commands you need to execute for a
-"default" PHP build::
+Bireysel kurulum ayarlarına daha yakından bakmadan önce, "varsayılan" PHP yapılandırması için
+aşağıdaki komutları çalıştırmanız gerekmektedir::
 
     ~/php-src> ./buildconf     # only necessary if building from git
     ~/php-src> ./configure
     ~/php-src> make -jN
 
-For a fast build, replace ``N`` with the number of CPU cores you have available (see ``grep "cpu cores" /proc/cpuinfo``).
+Daha hızlı bir yapılandırma için, ``N`` kısmını işlemciniz içi uygun çekirdek sayısıyla değiştirebilirsiniz
+(çekidek sayısını görüntülemek için bu komutu çalıştırın ``grep "cpu cores" /proc/cpuinfo``).
 
-By default PHP will build binaries for the CLI and CGI SAPIs, which will be located at ``sapi/cli/php`` and
-``sapi/cgi/php-cgi`` respectively. To check that everything went well, try running ``sapi/cli/php -v``.
+Varsayılan olarak PHP komut satırı(CLI), ortak ağ geçidi(CGI) ve sunucu uygulaması programlama
+arabirimleri(SAPI) için binary dosyalar oluşturur, bunlar sırasıyla ``sapi/cli/php`` ve
+``sapi/cgi/php-cgi`` dosyalarıdır. Herşeyin yolunda gittiğinden emin olmak için, ``sapi/cli/php -v``
+komutunu çalıştırın.
 
-Additionally you can run ``sudo make install`` to install PHP into ``/usr/local``. The target directory can be changed
-by specifying a ``--prefix`` in the configuration stage::
+Ayrıca, PHP'yi ``/usr/local`` içerisine yüklemek için, ``sudo make install`` komutunu da çalıştırabilirsiniz.
+Konfigürasyon aşamasında, hedef klasör ``--prefix`` parametresi verilerek değiştirilebilir::
 
     ~/php-src> ./configure --prefix=$HOME/myphp
     ~/php-src> make -jN
     ~/php-src> make install
 
-Here ``$HOME/myphp`` is the installation location that will be used during the ``make install`` step. Note that
-installing PHP is not necessary, but can be convenient if you want to use your PHP build outside of extension
-development.
+Burada ``$HOME/myphp``, ``make install`` aşaması boyunca kullanılacak yüklemenin lokasyonudur.
+Şunu unutmayın ki, PHP'yi yüklemek bu iş için gerekli değil, fakat PHP'yi eklenti geliştirme dışında da
+kullanacaksanız sizin için uygun olabilir.
 
-Now lets take a closer look at the individual build steps!
+Şimdi bireysel kurulum aşamalarına daha yakından bakalım!
 
 ``./buildconf`` skripti
 -----------------------
 
-If you are building from the git repository, the first thing you'll have to do is run the ``./buildconf`` script. This
-script does little more than invoking the ``build/build.mk`` makefile, which in turn calls ``build/build2.mk``.
+Eğer yapılandırma işlemine git reposundan başladıysanız, ilk önce ``./buildconf`` skriptini çalıştırmanız
+gerekmektedir. Bu skript, ``build/build.mk`` dosyasını çağırmaktan daha fazlasını yapar. 
 
 The main job of these makefiles is to run ``autoconf`` to generate the ``./configure`` script and ``autoheader`` to
 generate the ``main/php_config.h.in`` template. The latter file will be used by configure to generate the final
