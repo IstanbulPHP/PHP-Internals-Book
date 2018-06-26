@@ -143,52 +143,62 @@ kullanacaksanız sizin için uygun olabilir.
 -----------------------
 
 Eğer yapılandırma işlemine git reposundan başladıysanız, ilk önce ``./buildconf`` skriptini çalıştırmanız
-gerekmektedir. Bu skript, ``build/build.mk`` dosyasını çağırmaktan daha fazlasını yapar. 
+gerekmektedir. Bu skript, ``build/build.mk`` dosyasını çağırmaktan daha fazlasını yapar.
 
-The main job of these makefiles is to run ``autoconf`` to generate the ``./configure`` script and ``autoheader`` to
-generate the ``main/php_config.h.in`` template. The latter file will be used by configure to generate the final
-configuration header file ``main/php_config.h``.
+Bu makefile dosyalarının asıl görevi ``autoconf``'u ``./configure`` ve ``autoheader``skriptlerini üretmesi için çağırmaktır. Bu çağrıdan sonra da
+``main/php_config.h.in`` şablonu oluşur.
 
-Both utilities produce their results from the ``configure.in`` file (which specifies most of the PHP build process),
-the ``acinclude.m4`` file (which specifies a large number of PHP-specific M4 macros) and the ``config.m4`` files of
-individual extensions and SAPIs (as well as a bunch of other ``m4`` files).
+Son bahsedilen dosya, yapılandırma başlık dosyası `` main / php_config.h``'ı oluşturmak için  kullanılacaktır.
 
-The good news is that writing extensions or even doing core modifications will not require much interaction with the
-build system. You will have to write small ``config.m4`` files later on, but those usually just use two or three of the
-high-level macros that ``acinclude.m4`` provides. As such we will not go into further detail here.
+Her iki program da kendi sonuçlarını `` configure.in`` dosyasından (PHP yapılandırma sürecinin çoğunu kapsayan)
+üretir, "acinclude.m4" (çok sayıda PHP'ye özgü M4 makroları) ve "config.m4" dosyaları, bireysel uzantılar ve SAPIler
+(çok sayıda ``m4`` dosyası) dosyaları.
 
-The ``./buildconf`` script only has two options: ``--debug`` will disable warning suppression when calling autoconf and
-autoheader. Unless you want to work on the buildsystem, this option will be of little interest to you.
+İyi haber şu ki, eklenti yazmak veya çekirdekte değişiklikler yapmak, yapı sistemiyle
+çok fazla etkileşim gerektirmeyecek. Sonradan küçük ``config.m4`` dosyaları yazmanız gerekecek fakat bunlar sadece
+birkaç taneden oluşan ``acinclude.m4``'ün sağladığı yüksek-seviye makrolar olacak. Bunun haricinde daha
+fazla ayrıntıya girmeyeceğiz.
 
-The second option is ``--force``, which will allow running ``./buildconf`` in release packages (e.g. if you downloaded
-the packaged source code and want to generate a new ``./configure``) and additionally clear the configuration caches
-``config.cache`` and ``autom4te.cache/``.
+``./buildconf`` skripti sadece iki seçeneğe sahip: ``--debug`` seçeneği autoconf ve
+autoheader çağırılırken, uyarı bastırmayı devredışı bırakır. buildsystem üzerinde çalışmadığınız sürece,
+bu seçenek ilginizi çok da çekmeyecektir.
 
-If you update your git repository using ``git pull`` (or some other command) and get weird errors during the ``make``
-step, this usually means that something in the build configuration changed and you need to run ``./buildconf --force``.
+İkincisi ise, dağıtım paketlerinde (eğer paketlenmiş bir kaynak kodu indirmiş 
+ve yeni bir ``./configure`` oluşturmakistiyorsanız) ``./buildconf`` çalıştırabilmenizi
+sağlayan ve yapılandırma önbelleği olan ``config.cache`` ve ``autom4te.cache/``'i temizlemeyi sağlayan 
+``--force`` seçeneği.
+
+Eğer git deponuzu(repository) ``git pull`` komutuyla (ya da başka bir komutla) güncellerseniz ve 
+
+If you update your git repository using ``git pull`` (or some other command) and ``make`` işlemi sırasında
+garip hatalar alırsanız, bu yapılandırmanızda bir şeylerin değiştiği ve ``./buildconf --force`` komutunu
+çalıştırmanız gerektiği anlamına gelir.
 
 ``./configure`` skripti
 -----------------------
 
-Once the ``./configure`` script is generated you can make use of it to customize your PHP build. You can list all
-supported options using ``--help``::
+``./configure`` skripti bir kere oluşturulduktan sonra PHP yapınızı özelleştirmek için kullanabilirsiniz.
+``--help`` yazarak tüm desteklenen komutları görüntüleyebilirsiniz::
 
     ~/php-src> ./configure --help | less
 
-The first part of the help will list various generic options, which are supported by all autoconf-based configuration
-scripts. One of them is the already mentioned ``--prefix=DIR``, which changes the installation directory used by
-``make install``. Another useful option is ``-C``, which will cache the result of various tests in the ``config.cache``
-file and speed up subsequent ``./configure`` calls. Using this option only makes sense once you already have a working
-build and want to quickly change between different configurations.
+Yardım menüsünün ilk kısmı, tüm autoconf tabanlı yapılandırma komut dosyaları tarafından desteklenen
+çeşitli seçenekleri listeler. Bunlardan biri, `` install make`` tarafından kullanılan
+kurulum dizinini değiştiren ``prefix = DIR``'dir. Bir başka kullanışlı seçenek olarak ``-C``,
+``config.cache`` dosyasındaki çeşitli testlerin sonuçlarını önbelleğe alır ve sonraki ``./configure`` çağrılarını
+hızlandırır. Bu seçeneği kullanmak, yalnızca çalışan bir yapınız olduğunda ve farklı bir yapılandırmaya
+hızlıca geçmek istediğinizde mantıklıdır.
 
-Apart from generic autoconf options there are also many settings specific to PHP. For example, you can choose which
-extensions and SAPIs should be compiled using the ``--enable-NAME`` and ``--disable-NAME`` switches. If the extension or
-SAPI has external dependencies you need to use ``--with-NAME`` and ``--without-NAME`` instead. If a library needed by
-``NAME`` is not located in the default location (e.g. because you compiled it yourself) you can specify its location
-using ``--with-NAME=DIR``.
+Genel autoconf seçeneklerinden ayrı olarak PHP'ye özgü birçok ayar vardır. Örneğin,
+``--enable-NAME`` ve ``--disable-NAME`` parametreleri kullanılarak hangi uzantıların ve SAPI'lerin derlenmesi
+gerektiğini belirleyebilirsiniz. Uzantı veya SAPI'lerin dış bağımlılıkları varsa bunun yerine 
+``--with-NAME`` ve ``--without-NAME`` kullanmanız gerekir. Eğer ``NAME`` tarafından ihtiyaç duyulan kütüphane
+varsayılan konumda bulunmuyorsa(eğer kendiniz derlediyseniz), `--with-NAME=DIR`` parametresi kullanılarak konum
+belirtebilirsiniz.
 
-By default PHP will build the CLI and CGI SAPIs, as well as a number of extensions. You can find out which extensions
-your PHP binary contains using the ``-m`` option. For a default PHP 5.5 build the result will look as follows:
+PHP, CLI ve CGI SAPI'lerini ve birçok uzantıyı oluşturacaktır. PHP ikili dosyanızın(binary),
+`` -m`` seçeneğini kullanarak hangi uzantılarını içerdiğini öğrenebilirsiniz.
+Varsayılan bir PHP 5.5 yapılandırması için sonuç şöyle görünecektir:
 
 .. code-block:: none
 
