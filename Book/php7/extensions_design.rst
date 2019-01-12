@@ -1,5 +1,5 @@
 Eklentilerin dizaynı
-=================
+====================
 
 In this chapter you'll learn how to design PHP extensions. You'll learn about the PHP lifecycle, how and when to manage 
 memory, the different hooks you can use or the different function pointers you can replace to actively change PHP's 

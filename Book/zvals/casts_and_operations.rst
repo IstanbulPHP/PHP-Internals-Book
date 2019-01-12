@@ -1,8 +1,8 @@
 Dönüşümler ve işlemler
-====================
+======================
 
 Temel işlemler
-----------------
+--------------
 
 As zvals are complex structures you can't directly perform basic operations like ``zv1 + zv2`` on them. Doing something
 like this will either give you an error or end up adding together two pointers rather than their values.

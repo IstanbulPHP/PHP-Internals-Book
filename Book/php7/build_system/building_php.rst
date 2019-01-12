@@ -3,7 +3,7 @@
 .. _building_php:
 
 PHP'yi yapılandırmak
-============
+====================
 
 This chapter explains how you can compile PHP in a way that is suitable for development of extensions or core
 modifications. We will only cover builds on Unixoid systems. If you wish to build PHP on Windows, you should take a look
@@ -17,7 +17,7 @@ description is outside the scope of this book.
 .. [#] Disclaimer: We are not liable for any adverse health effects caused by the attempt to compile PHP on Windows.
 
 Neden paketleri kullanmıyorsun?
----------------------
+-------------------------------
 
 PHP'yi kullanıyorsanız, büyük ihtimalle paketleri yüklerken ``sudo apt-get install php`` gibi bir komut
 kullandınız. Gerçek derleme işleminden bahsetmeye geçmeden önce, elle derleme yapmanın gerekliliğini ve
@@ -48,7 +48,7 @@ ya da eklenti yazmak için yardım kanallarımızı kullanmak istiyorsanız, dai
 .. _`php.net`: http://www.php.net
 
 Kaynak kodu edinmek
--------------------------
+-------------------
 
 Before you can build PHP you first need to obtain its source code. There are two ways to do this: You can either
 download an archive from `PHP's download page`_ or clone the git repository from `git.php.net`_ (or the mirror on
@@ -106,7 +106,7 @@ build-dependencies in one go. If you are only aiming for a default build, many o
 .. _Git FAQ: https://wiki.php.net/vcs/gitfaq
 
 Yapılandırmaya genel bakış
---------------
+--------------------------
 
 Before taking a closer look at what the individual build steps do, here are the commands you need to execute for a
 "default" PHP build::
@@ -133,8 +133,8 @@ development.
 
 Now lets take a closer look at the individual build steps!
 
-``./buildconf`` skripti
---------------------------
+``./buildconf`` betiği
+----------------------
 
 If you are building from the git repository, the first thing you'll have to do is run the ``./buildconf`` script. This
 script does little more than invoking the ``build/build.mk`` makefile, which in turn calls ``build/build2.mk``.
@@ -161,8 +161,8 @@ the packaged source code and want to generate a new ``./configure``) and additio
 If you update your git repository using ``git pull`` (or some other command) and get weird errors during the ``make``
 step, this usually means that something in the build configuration changed and you need to run ``./buildconf --force``.
 
-``./configure`` skripti
---------------------------
+``./configure`` betiği
+-----------------------
 
 Once the ``./configure`` script is generated you can make use of it to customize your PHP build. You can list all
 supported options using ``--help``::
@@ -296,7 +296,7 @@ For GCC, you may read them `in the GCC manual`_
 .. _in the GCC manual: https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#Warning-Options
 
 ``make`` ve ``make install``
------------------------------
+----------------------------
 
 After everything is configured, you can use ``make`` to perform the actual compilation::
 
@@ -426,7 +426,7 @@ about your build, e.g. your configure options or the default extension directory
 ``./php -i`` (phpinfo), but ``php-config`` provides it in a simpler form (which can be easily used by automated tools).
 
 Test ortamını çalıştırmak
-----------------------
+-------------------------
 
 If the ``make`` command finishes successfully, it will print a message encouraging you to run ``make test``:
 
@@ -478,7 +478,7 @@ We will take a more detailed look at the ``run-tests.php`` system later, in part
 own tests and how to debug test failures.
 
 Derleme problemlerini gidermek ve ``make clean`` komutu
-----------------------------------------------
+-------------------------------------------------------
 
 As you may know ``make`` performs an incremental build, i.e. it will not recompile all files, but only those ``.c``
 files that changed since the last invocation. This is a great way to shorten build times, but it doesn't always work

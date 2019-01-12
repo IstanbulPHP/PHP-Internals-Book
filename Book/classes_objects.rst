@@ -1,5 +1,5 @@
 Sınıflar ve nesneler
-===================
+====================
 
 Son yıllarda PHP, her geçen gün prosedürel bir dilden nesneye dayalı bir dile dönüşüyor. Temeller hala prosedürel
 nitelikte olmasına rağmen (özellikle de standart kütüphanenin büyük bölümleri) günümüzdeki kütüphaneler sınıflar ve

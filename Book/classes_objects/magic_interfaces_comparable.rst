@@ -1,5 +1,5 @@
 Sihirli arayüzler - Karşılaştırılabilir
-=============================
+=======================================
 
 Internal interfaces in PHP are very similar to their userland equivalents. The only notable difference is that internal
 interfaces have the additional possibility of specifying a handler that is executed when the interface is implemented.

@@ -1,5 +1,5 @@
 Tipli dizilerin (typed arrays) implementasyonu
-=========================
+==============================================
 
 The previous two sections have been talking about the class system rather abstractly. In this section on the other hand
 I'd like to guide you through the implementation of a "real" class: A typed array. I use this as an example for two

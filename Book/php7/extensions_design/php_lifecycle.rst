@@ -1,5 +1,5 @@
 PHP hayat döngüsünü öğrenmek
-==========================
+============================
 
 PHP's a complex machinery which lifecycle should really be mastered by anyone pretending to hook into it.
 The main line is as follow :
@@ -62,7 +62,7 @@ And here is the thread-based model:
           Windows platforms, and you'll have to program against it.
 
 PHP eklenti hookları
-************************
+********************
 
 As you could have guessed, the PHP engine will trigger your extension at several lifetime points. We call those *hook 
 functions*. Your extension may declare interest into specific lifetime points by declaring function hooks while it 
@@ -264,7 +264,7 @@ threads as multi-processing engine, then you crash every other thread with you, 
 .. todo: Add a chapter about debugging. Add a chapter about memory leak tracking.
 
 Fonksiyon işaretçilerini üzerine yazarak hooklamak
-*****************************************
+**************************************************
 
 Now you know when the engine will trigger your code, there exists also noticeable function pointers you may replace to 
 hook into the engine.

@@ -1,13 +1,13 @@
 .. highlight:: bash
 
 PHP eklentilerini yapılandırmak
-=======================
+===============================
 
 Now that you know how to compile PHP itself, we'll move on to compiling additional extensions. We'll discuss how the
 build process works and what different options are available.
 
 Paylaşılan eklentileri yüklemek
--------------------------
+-------------------------------
 
 As you already know from the previous section, PHP extensions can be either built statically into the PHP binary, or
 compiled into a shared object (``.so``). Static linkage is the default for most of the bundled extensions, whereas
@@ -113,7 +113,7 @@ statically linked into the PHP binary, i.e. no additional actions are needed to 
 use ``make install`` to install the resulting binaries.
 
 ``phpize`` kullanarak eklenti yapılandırmak
-------------------------------------
+-------------------------------------------
 
 It is also possible to build extensions separately from PHP by making use of the ``phpize`` script that was already
 mentioned in the :ref:`building_php` section.
@@ -150,7 +150,7 @@ the extension, should the incremental build fail after a change. Additionally ph
 ``/configure`` script.
 
 Eklentiler hakkındaki bilgileri görüntülemek
----------------------------------------
+--------------------------------------------
 
 The PHP CLI binary provides several options to display information about extensions. You already know ``-m``, which will
 list all loaded extensions. You can use it to verify that an extension was loaded correctly::

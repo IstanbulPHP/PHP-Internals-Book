@@ -47,5 +47,5 @@ Yazarlar
 Çeviriler
 -------
 
-* Emir Karşıyakalı: emirkarsiyakali@gmail.com
 * Tolga Boztuna: tboztuna@yahoo.com
+* Emir Karşıyakalı: emirkarsiyakali@gmail.com

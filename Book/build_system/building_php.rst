@@ -57,8 +57,8 @@ PHP'yi yapılandırmadan önce, kaynak kodunu edinmeniz gerekmektedir. Kodu edin
 `Github`_ ikiz bağlantısından) edinebilirsiniz.
 
 Yukarıdaki her iki durum için yapılandırma işlemi farklı olarak gerçekleşiyor: Git reposundaki arşiv bir ``configure`` 
-skripti içermiyor. Bundan dolayı, aslında ``autoconf``'u kullanan ``buildconf`` skriptini kullanarak, bir ``configure`` 
-skripti oluşturmanız gerekecek. Ek olarak, git reposu önceden oluşturulmuş bir ayrıştırıcı içermiyor, bu eksikliğin
+betiği içermiyor. Bundan dolayı, aslında ``autoconf``'u kullanan ``buildconf`` betiğini kullanarak, bir ``configure`` 
+betiği oluşturmanız gerekecek. Ek olarak, git reposu önceden oluşturulmuş bir ayrıştırıcı içermiyor, bu eksikliğin
 giderilmesi için bilgisayarınızda bison'un yüklü olması gerekiyor.
 
 PHP kaynak kodunu git üzerinden edinmenizi tavsiye ediyoruz, bu yöntem ile kurulumunuz en güncel halde kalacak ve
@@ -85,7 +85,7 @@ ilk üçü yüklü olarak gelecektir):
 * ``gcc`` veya başka bir derleyici paketi.
 * ``libc-dev``, başlıkları ve C standart kütüphanesini içerir.
 * ``make``, PHP'nin kullandığı kurulum aracı.
-* ``autoconf`` (2.59 ya da üzeri), ``configure`` skriptini oluşturmak için kullanılır.
+* ``autoconf`` (2.59 ya da üzeri), ``configure`` betiğini oluşturmak için kullanılır.
 * ``automake`` (1.4 ya da üzeri), ``Makefile.in`` dosyalarını oluşturur.
 * ``libtool``, paylaşımlı kütüphaneleri yönetmeye yardımcı olur.
 * ``bison`` (2.4 ya da üzeri), PHP ayrıştırıcısını oluşturmak için kullanılır.
@@ -139,13 +139,13 @@ kullanacaksanız sizin için uygun olabilir.
 
 Şimdi bireysel kurulum aşamalarına daha yakından bakalım!
 
-``./buildconf`` skripti
+``./buildconf`` betiği
 -----------------------
 
-Eğer yapılandırma işlemine git reposundan başladıysanız, ilk önce ``./buildconf`` skriptini çalıştırmanız
-gerekmektedir. Bu skript, ``build/build.mk`` dosyasını çağırmaktan daha fazlasını yapar.
+Eğer yapılandırma işlemine git reposundan başladıysanız, ilk önce ``./buildconf`` betiğini çalıştırmanız
+gerekmektedir. Bu betik, ``build/build.mk`` dosyasını çağırmaktan daha fazlasını yapar.
 
-Bu makefile dosyalarının asıl görevi ``autoconf``'u ``./configure`` ve ``autoheader``skriptlerini üretmesi için çağırmaktır. Bu çağrıdan sonra da
+Bu makefile dosyalarının asıl görevi ``autoconf``'u ``./configure`` ve ``autoheader``betiklerini üretmesi için çağırmaktır. Bu çağrıdan sonra da
 ``main/php_config.h.in`` şablonu oluşur.
 
 Son bahsedilen dosya, yapılandırma başlık dosyası `` main / php_config.h``'ı oluşturmak için  kullanılacaktır.
@@ -159,7 +159,7 @@ Her iki program da kendi sonuçlarını `` configure.in`` dosyasından (PHP yap�
 birkaç taneden oluşan ``acinclude.m4``'ün sağladığı yüksek-seviye makrolar olacak. Bunun haricinde daha
 fazla ayrıntıya girmeyeceğiz.
 
-``./buildconf`` skripti sadece iki seçeneğe sahip: ``--debug`` seçeneği autoconf ve
+``./buildconf`` betiği sadece iki seçeneğe sahip: ``--debug`` seçeneği autoconf ve
 autoheader çağırılırken, uyarı bastırmayı devredışı bırakır. buildsystem üzerinde çalışmadığınız sürece,
 bu seçenek ilginizi çok da çekmeyecektir.
 
@@ -174,10 +174,10 @@ If you update your git repository using ``git pull`` (or some other command) and
 garip hatalar alırsanız, bu yapılandırmanızda bir şeylerin değiştiği ve ``./buildconf --force`` komutunu
 çalıştırmanız gerektiği anlamına gelir.
 
-``./configure`` skripti
+``./configure`` betiği
 -----------------------
 
-``./configure`` skripti bir kere oluşturulduktan sonra PHP yapınızı özelleştirmek için kullanabilirsiniz.
+``./configure`` betiği bir kere oluşturulduktan sonra PHP yapınızı özelleştirmek için kullanabilirsiniz.
 ``--help`` yazarak tüm desteklenen komutları görüntüleyebilirsiniz::
 
     ~/php-src> ./configure --help | less
@@ -231,24 +231,25 @@ Varsayılan bir PHP 5.5 yapılandırması için sonuç şöyle görünecektir:
     xmlreader
     xmlwriter
 
-If you now wanted to stop compiling the CGI SAPI, as well as the tokenizer and sqlite3 extensions and instead enable
-opcache and gmp, the corresponding configure command would be::
+Şimdi, CGI SAPI'nin yanı sıra belirteç(tokenizer) ve sqlite3 uzantılarını derlemeyi durdurmak ve bunun yerine
+opcache ve gmp'yi etkinleştirmek istediğinizde, ilgili yapılandırma komutu::
 
     ~/php-src> ./configure --disable-cgi --disable-tokenizer --without-sqlite3 \
                            --enable-opcache --with-gmp
 
-By default most extensions will be compiled statically, i.e. they will be part of the resulting binary. Only the opcache
-extension is shared by default, i.e. it will generate an ``opcache.so`` shared object in the ``modules/`` directory. You
-can compile other extensions into shared objects as well by writing ``--enable-NAME=shared`` or ``--with-NAME=shared``
-(but not all extensions support this). We'll talk about how to make use of shared extensions in the next section.
+Varsayılan olarak, birçok eklenti statik olarak derlenir, diğer bir deyişle; ortaya çıkan ikili kodun parçası olur.
+Sadece opcache uzantısı varsayılan olarak paylaşılır, yani; ``modules/`` klasörü içerisinde ``opcache.so`` paylaşımlı
+objesi oluşturulur. ``--enable-NAME=shared`` ya da ``--with-NAME=shared`` yazarak, diğer uzantıların da birer paylaşımlı
+obje olarak derlenmesini sağlayabilirsiniz (fakat her uzantı bunu desteklemez). Bir sonraki bölümde,
+paylaşılan uzantıların nasıl kullanılacağı hakkında konuşacağız.
 
-To find out which switch you need to use and whether an extension is enabled by default, check ``./configure --help``.
-If the switch is either ``--enable-NAME`` or ``--with-NAME`` it means that the extension is not compiled by default and
-needs to be explicitly enabled. ``--disable-NAME`` or ``--without-NAME`` on the other hand indicate an extension that
-is compiled by default, but can be explicitly disabled.
+Hangi anahtarı kullanmanız gerektiğini ve bir uzantının varsayılan olarak etkin olup olmadığını öğrenmek için, 
+``./configure --help`` komutuna bakınız. Eğer anahtar ``--enable-NAME`` ya da ``--with-NAME`` ise, bu uzantının
+varsayılan olarak derlenmediğini ve etkinleştirilmesi gerektiğini belirtir. Diğer bir seçenek olan `--disable-NAME``
+veya ``--without-NAME`` anahtarları, uzantının varsayılan olarak derlendiğini ve devredışı bırakılabileceğini gösterir.
 
-Some extensions are always compiled and can not be disabled. To create a build that only contains the minimal amount of
-extensions use the ``--disable-all`` option::
+Bazı eklentiler daima derlenmiş olarak gelir ve devredışı bırakılamaz. Minimum uzantı içeren bir yapılandırma
+elde etmek için ``--disable-all`` opsiyonu kullanılmalıdır::
 
     ~/php-src> ./configure --disable-all && make -jN
     ~/php-src> sapi/cli/php -m
@@ -261,70 +262,76 @@ extensions use the ``--disable-all`` option::
     SPL
     standard
 
-The ``--disable-all`` option is very useful if you want a fast build and don't need much functionality (e.g. when
-implementing language changes). For the smallest possible build you can additionally specify the ``--disable-cgi``
-switch, so only the CLI binary is generated.
 
-There are two more switches, which you should **always** specify when developing extensions or working on PHP:
+``--disable-all`` opsiyonu, fazla fonksiyonellik barındırmayan ve hızlı bir build istediğinizde çok kullanışlıdır
+(Örneğin: dil değişiklikleri uygulamak istediğinizde). Mümkün olan en küçük yapılandırma için ek olarak 
+``--disable-cgi`` anahtarını belirttiğinizde, sadece CLI ikilisi(binary) oluşturulur.
 
-``--enable-debug`` enables debug mode, which has multiple effects: Compilation will run with ``-g`` to generate debug
-symbols and additionally use the lowest optimization level ``-O0``. This will make PHP a lot slower, but make debugging
-with tools like ``gdb`` more predictable. Furthermore debug mode defines the ``ZEND_DEBUG`` macro, which will enable
-various debugging helpers in the engine. Among other things memory leaks, as well as incorrect use of some data
-structures, will be reported.
+Eklenti geliştirirken veya PHP üzerinde çalışırken **her zaman** belirtmeniz gereken iki anahtar daha vardır:
 
-``--enable-maintainer-zts`` enables thread-safety. This switch will define the ``ZTS`` macro, which in turn will enable
-the whole TSRM (thread-safe resource manager) machinery used by PHP. Writing thread-safe extensions for PHP is very
-simple, but only if make sure to enable this switch. Otherwise you're bound to forget a ``TSRMLS_*`` macro somewhere and
-your code won't build in a thread-safe environment.
+``--enable-debug``, birden fazla etkiye sahip olan ayıklama modunu etkinleştirir: Derleme, ayıklama sembollerini
+oluşturmak için ``-g`` parametresiyle çalışır ve en düşük optimizasyon seviyesi olan ``-O0`` kullanılır.
+Bu PHP'nin çok daha fazla yavaş hale getirecek, fakat ``gdb`` gibi araçlarla hata ayıklamayı daha
+öngörülebilir hale getirecek. Ayrıca hata ayıklama modu, motorda(engine) çeşitli hata ayıklama yardımcılarını
+etkinleştirecek olan ``ZEND_DEBUG`` makrosunu tanımlar. Diğer şeylerin yanı sıra hafıza sızıntısı, veri yapılarının
+yanlış kullanımı rapor edilecektir. 
 
-On the other hand you should not use either of these options if you want to perform performance benchmarks for your
-code, as both can cause significant and asymmetrical slowdowns.
+``--enable-maintainer-zts`` iş parçacığı güvenliğini(thread-safety) sağlar. Bu anahtar, PHP tarafından kullanılan tüm
+TSRM(İş Parçacığı Güvenli Kaynak Yöneticisi) makinelerini mümkün kılacak olan ``ZTS`` makrosunu tanımlar. PHP için
+güvenli iş parçacığı(thread-safe) uzantıları yazmak basittir, ancak bu anahtarı etkinleştirdiğinizden emin olmalısınız.
+Aksi takdirde bir yerde ``TSRMLS_*`` makrosunu unutmak zorundasınız ve kodunuz iş parçacığı güvenli(thread-safe) bir
+ortamda oluşturulmayacaktır.
 
-Note that ``--enable-debug`` and ``--enable-maintainer-zts`` change the ABI of the PHP binary, e.g. by adding additional
-arguments to many functions. As such shared extensions compiled in debug mode will not be compatible with a PHP binary
-built in release mode. Similarly a thread-safe extension is not compatible with a thread-unsafe PHP build.
+Öte yandan, kodunuz için performans ölçümü gerçekleştirmek istiyorsanız bu seçeneklerin ikisini de önemli ve asimetrik
+yavaşlamalara sebep olabileceğinden kullanmamalısınız.
 
-Due to the ABI incompatibility ``make install`` (and PECL install) will put shared extensions in different directories
-depending on these options:
+``--enable-debug`` ve ``--enable-maintainer-zts`` anahtarlarının PHP ikili(binary) kodunun ABI'ini değiştirdiğine
+dikkat edin, örneğin; birçok fonksiyona ek argümanlar eklemek gibi. Hata ayıklama modunda derlenen paylaşılan uzantılar
+PHP ikilisi(binary) ile uyumlu olmayacağından serbest bırakma modunda(release mode) yerleşiktir. Benzer şekilde,
+iş parçacığı güvenli(thread-safe) bir uzantı iş parçacığı güvensiz(thread-unsafe) bir PHP yapılandırması ile
+uyumlu değildir.
 
-* ``$PREFIX/lib/php/extensions/no-debug-non-zts-API_NO`` for release builds without ZTS
-* ``$PREFIX/lib/php/extensions/debug-non-zts-API_NO`` for debug builds without ZTS
-* ``$PREFIX/lib/php/extensions/no-debug-zts-API_NO`` for release builds with ZTS
-* ``$PREFIX/lib/php/extensions/debug-zts-API_NO`` for debug builds with ZTS
+ABI uyumsuzluğu nedeniyle ``make install`` (ve PECL install) komutu paylaşımlı eklentilerini aşağıdaki seçeneklere
+bağlı olarak farklı dizinlere koyacağız:
 
-The ``API_NO`` placeholder above refers to the ``ZEND_MODULE_API_NO`` and is just a date like ``20100525``, which is
-used for internal API versioning.
+* ``$PREFIX/lib/php/extensions/no-debug-non-zts-API_NO`` ZTS içermeyen serbest bırakma sürümleri için(release builds)
+* ``$PREFIX/lib/php/extensions/debug-non-zts-API_NO`` ZTS içermeyen hata ayıklama sürümleri için(debug builds)
+* ``$PREFIX/lib/php/extensions/no-debug-zts-API_NO`` ZTS içeren serbest bırakma sürümleri için(release builds)
+* ``$PREFIX/lib/php/extensions/debug-zts-API_NO`` ZTS içeren hata ayıklama sürümleri için(debug builds)
 
-For most purposes the configuration switches described above should be sufficient, but of course ``./configure``
-provides many more options, which you'll find described in the help.
+Yukarıdaki ``API_NO`` yer tutucusu(placeholder) ``ZEND_MODULE_API_NO``'ya karşılık gelir ve bu, ``20100525`` gibi bir
+tarihtir, dahili API sürümlemesi için kullanılır.
 
-Apart from passing options to configure, you can also specify a number of environment variables. Some of the more
-important ones are documented at the end of the configure help output (``./configure --help | tail -25``).
+Çoğu amaç için yukarıdaki açıklanan yapılandırma anahtarları yeterli olur, ancak elbette ``./configure`` yardım
+kısmında açıklandığı gibi birçok seçenek sunar.
 
-For example you can use ``CC`` to use a different compiler and ``CFLAGS`` to change the used compilation flags::
+Yapılandırılacak seçeneklerin yanı sıra, bir dizi ortam değişkeni de belirleyebilirsiniz. En önemlilerinden bazıları,
+'yapılandır' (configure) yardım çıktısının (``./configure --help | tail -25``) sonunda belirtilmiştir.
+
+Örneğin, farklı bir derleyici kullanmak için ``CC`` ve kullanılmış derleme bayraklarını değiştirmek için ``CFLAGS``
+kullanabilirsiniz::
 
     ~/php-src> ./configure --disable-all CC=clang CFLAGS="-O3 -march=native"
 
-In this configuration the build will make use of clang (instead of gcc) and use a very high optimization level
-(``-O3 -march=native``).
+Bu yapılandırmada, derleme clang (gcc yerine) kullanacak ve çok yüksek bir optimizasyon seviyesi
+kullanacaktır (``-O3 -march=native``).
 
 ``make`` ve ``make install``
 ----------------------------
 
-After everything is configured, you can use ``make`` to perform the actual compilation::
+Her şey ayarlandıktan sonra, gerçek derlemeyi gerçekleştirmek için ``make`` komutunu kullanabilirsiniz::
 
-    ~/php-src> make -jN    # where N is the number of cores
+    ~/php-src> make -jN    # N, çekirdeklerin sayısıdır
 
-The main result of this operation will be PHP binaries for the enabled SAPIs (by default ``sapi/cli/php`` and
-``sapi/cgi/php-cgi``), as well as shared extensions in the ``modules/`` directory.
+Bu işlemin ana sonucu, etkin SAPI'ler için (varsayılan olarak ``sapi/cli/php`` ve ``sapi/cgi/php-cgi``)
+PHP ikilisinin(binary) yanısıra, ``modules/`` dizinindeki paylaşımlı uzantılar olacaktır.
 
-Now you can run ``make install`` to install PHP into ``/usr/local`` (default) or whatever directory you specified using
-the ``--prefix`` configure switch.
+Şimdi PHP'yi ``/usr/local``(varsayılan) dizine yüklemek için ``make install`` komutunu çalıştırabilirsiniz ya da
+farklı bir dizine yüklemek istiyorsanız, ``--prefix`` anahtarını kullanarak bu işlemi gerçekleştirebilirsiniz.
 
-``make install`` will do little more than copy a number of files to the new location. Unless you specified
-``--without-pear`` during configuration, it will also download and install PEAR. Here is the resulting tree of a default
-PHP build:
+``make install`` yeni lokasyona dosya kopyalama işleminden çok daha fazlasını yapar. Yapılandırma sırasında
+``--without-pear`` anahtarını belirtmediyseniz, PEAR da indirilip yüklenecektir. Aşağıda varsayılan PHP derlemesinin
+sonuç ağacını bulabilirsiniz:
 
 .. code-block:: none
 
@@ -372,19 +379,19 @@ PHP build:
         `-- man
             `-- man1/
 
-A short overview of the directory structure:
+Dizin yapısına kısa bir genel bakış:
 
-* *bin/* contains the SAPI binaries (``php`` and ``php-cgi``), as well as the ``phpize`` and ``php-config`` scripts.
-  It is also home to the various PEAR/PECL scripts.
-* *etc/* contains configuration. Note that the default *php.ini* directory is **not** here.
-* *include/php* contains header files, which are needed to build additional extensions or embed PHP in custom software.
-* *lib/php* contains PEAR files. The *lib/php/build* directory includes files necessary for building extensions, e.g.
-  the ``acinclude.m4`` file containing PHP's M4 macros. If we had compiled any shared extensions those files would live
-  in a subdirectory of *lib/php/extensions*.
-* *php/man* obviously contains man pages for the ``php`` command.
+* *bin/*, SAPI ikili(binary) dosyalarını(``php`` and ``php-cgi``) ve ``phpize`` and ``php-config`` betiklerini içerir.
+  Ayrıca çeşitli PEAR / PECL scriptlerine de ev sahipliği yapmaktadır.
+* *etc/*, konfigürasyonları barındırır. Varsayılan *php.ini* dizininin burada **olmadığını** unutmayalım.
+* *include/php*, ek uzantılar oluşturmak veya PHP'yi özel yazılıma yerleştirmek için gereken başlık dosyalarını içerir.
+* *lib/php*, PEAR dosyalarını içerir. *lib/php/build* dizini, uzantı yapılandırmak için gerekli dosyaları içerir,
+  örneğin: PHP'nin M4 makrolarını içeren ``acinclude.m4`` dosyası. Herhangi bir paylaşılan uzantıyı derlemiş olsaydık,
+  bu dosyalar *lib/php/extensions* dizini altında yaşardı.
+* *php/man* açıkça, ``php`` komutu için kılavuz sayfalarını içerir.
 
-As already mentioned, the default *php.ini* location is not *etc/*. You can display the location using the ``--ini``
-option of the PHP binary:
+Daha önce de belirtildiği gibi, varsayılan *php.ini* lokasyonu *etc/* değildir. Gerçek lokasyonu, PHP ikilisine(binary)
+``--ini`` anahtarını göndererek öğrenebilirsiniz:
 
 .. code-block:: none
 
@@ -394,11 +401,13 @@ option of the PHP binary:
     Scan for additional .ini files in: (none)
     Additional .ini files parsed:      (none)
 
-As you can see the default *php.ini* directory is ``$PREFIX/lib`` (libdir) rather than ``$PREFIX/etc`` (sysconfdir). You
-can adjust the default *php.ini* location using the ``--with-config-file-path=PATH`` configure option.
+Gördüğünüz üzere, varsayılan *php.ini* dizini ``$PREFIX/etc``(sysconfdir)'den ziyade ``$PREFIX/lib``(libdir) olarak
+gözüküyor. ``--with-config-file-path=PATH`` konfigürasyon seçeneğini kullanarak varsayılan *php.ini* konumunu
+ayarlayabilirsiniz.
 
-Also note that ``make install`` will not create an ini file. If you want to make use of a *php.ini* file it is your
-responsibility to create one. For example you could copy the default development configuration:
+Ayrıca, ``make install`` komutunun ini dosyası oluşturmayacağını unutmayın. *php.ini* dosyasından yararlanmak
+istiyorsanız, oluşturmak sizin sorumluluğunuzdadır. Örneğin, varsayılan geliştirme yapılandırmasından
+kopyalayabilirsiniz:
 
 .. code-block:: none
 
@@ -409,12 +418,13 @@ responsibility to create one. For example you could copy the default development
     Scan for additional .ini files in: (none)
     Additional .ini files parsed:      (none)
 
-Apart from the PHP binaries the *bin/* directory also contains two important scripts: ``phpize`` and ``php-config``.
+PHP ikili(binary) dosyalarından ayrı olarak *bin/* dizini de iki önemli komut betiği içerir: 
+``phpize`` ve ``php-config``.
 
-``phpize`` is the equivalent of ``./buildconf`` for extensions. It will copy various files from *lib/php/build* and
-invoke autoconf/autoheader. You will learn more about this tool in the next section.
+``phpize`` uzantılar için ``./buildconf`` ile eşdeğerdir. *lib/php/build* dizininden çeşitli dosyalar kopyalar ve
+autoconf/autoheader'ı çağırır. Bir sonraki bölümde, bu araçlar hakkında daha fazla bilgi edineceksiniz.
 
-``php-config`` provides information about the configuration of the PHP build. Try it out:
+``php-config``, PHP derlemesinin yapılandırması hakkında bilgi sağlar. Deneyin:
 
 .. code-block:: none
 
@@ -434,97 +444,101 @@ invoke autoconf/autoheader. You will learn more about this tool in the next sect
       --version           [5.4.16-dev]
       --vernum            [50416]
 
-The script is similar to the ``pkg-config`` script used by linux distributions. It is invoked during the extension
-build process to obtain information about compiler options and paths. You can also use it to quickly get information
-about your build, e.g. your configure options or the default extension directory. This information is also provided by
-``./php -i`` (phpinfo), but ``php-config`` provides it in a simpler form (which can be easily used by automated tools).
+Bu betik, linux dağıtımları tarafından kullanılan ``pkg-config`` betiğine benzer. Derleyici seçenekleri ve yolları
+hakkında bilgi edinmek için uzantı oluşturma işlemi sırasında çağrılır. Ayrıca, derlemeniz hakkında hızlı bir şekilde
+bilgi edinmek için de kullanabilirsiniz, örneğin: yapılandırma seçeneklerinizi veya varsayılan uzantı dizini. Bu bilgi
+``./php -i`` (phpinfo) tarafından da sağlanmıştır, ancak ``php-config`` daha basit bir biçimde (otomatik araçlar
+tarafından kolayca kullanılabilir) sağlanır.
 
 Test ortamını çalıştırmak
 -------------------------
 
-If the ``make`` command finishes successfully, it will print a message encouraging you to run ``make test``:
+``make`` komutu başarıyla tamamlanırsa ``make test``'i çalıştırmanız için bir mesaj yazdıracaktır:
 
 .. code-block:: none
 
     Build complete.
     Don't forget to run 'make test'
 
-``make test`` will run the PHP CLI binary against our test suite, which is located in the different *tests/* directories
-of the PHP source tree. As a default build is run against approximately 9000 tests (less for a minimal build, more if
-you enable additional extensions) this can take several minutes. The ``make test`` command is currently not parallel, so
-specifying the ``-jN`` option will not make it faster.
+``make test`` PHP kaynak ağacının farklı *test/* dizinlerinde bulunan test takımımıza karşı PHP CLI ikili(binary)
+dosyasını çalıştıracaktır. Varsayılan bir derleme yaklaşık 9000 teste karşı çalıştırıldığı için (minimum derleme için
+daha az, ek uzantıları etkinleştirirseniz daha fazla) bu birkaç dakika sürebilir. ``make test`` komutu şu anda paralel
+değildir, bu nedenle ``-jN`` seçeneğini belirlemek daha hızlı hale getirmez.
 
-If this is the first time you compile PHP on your platform, we encourage you to run the test suite. Depending on your
-OS and your build environment you may find bugs in PHP by running the tests. If there are any failures, the script will
-ask whether you want to send a report to our QA platform, which will allow contributors to analyze the failures. Note
-that it is quite normal to have a few failing tests and your build will likely work well as long as you don't see
-dozens of failures.
+PHP'yi platformunuzda ilk kez kullanıyorsanız, test takımını çalıştırmanızı öneririz. İşletim sisteminize ve yapı
+ortamınıza bağlı olarak, testleri çalıştırarak PHP'de hata bulabilirsiniz. Herhangi bir başarısızlık olursa, senaryo,
+QA platformumuza bir rapor göndermek isteyip istemediğinizi soracaktır, bu da katılımcıların başarısızlıkları analiz
+etmesine olanak sağlayacaktır. Birkaç başarısız testin yapılmasının oldukça normal olduğunu ve yapınızın düzinelerce
+hata görmediğiniz sürece muhtemelen işe yarayacağını unutmayın.
 
-The ``make test`` command internally invokes the ``run-tests.php`` file using your CLI binary. You can run
-``sapi/cli/php run-tests.php --help`` to display a list of options this script accepts.
+``make test`` komutu dahili olarak CLI ikili sisteminizi kullanarak ``run-tests.php`` dosyasını çağırır.
+Bu betiğin kabul ettiği seçeneklerin bir listesini görüntülemek için ``sapi/cli/php run-tests.php --help`` komutunu
+çalıştırabilirsiniz.
 
-If you manually run ``run-tests.php`` you need to specify either the ``-p`` or ``-P`` option (or an ugly environment
-variable)::
+Eğer ``run-tests.php``'i elle çalıştırıyorsanız, ``-p`` veya ``-P`` seçeneğini (veya çirkin bir ortam değişkenini)
+belirtmeniz gerekir::
 
     ~/php-src> sapi/cli/php run-tests.php -p `pwd`/sapi/cli/php
     ~/php-src> sapi/cli/php run-tests.php -P
 
-``-p`` is used to explicitly specify a binary to test. Note that in order to run all tests correctly this should be an
-absolute path (or otherwise independent of the directory it is called from). ``-P`` is a shortcut that will use the
-binary that ``run-tests.php`` was called with. In the above example both approaches are the same.
+``-p`` test edilecek bir ikili  dosyayı açıkça belirtmek için kullanılır. Tüm testleri doğru bir şekilde çalıştırmak
+için bunun mutlak bir yol (ya da denilen dizinden bağımsız olarak) olması gerektiğini unutmayın. ``-P``,
+``run-tests.php`` ile çağrılan ikili yodsyayı kullanacak bir kısayoldur.  Yukarıdaki örnekte her iki yaklaşım da
+aynıdır.
 
-Instead of running the whole test suite, you can also limit it to certain directories by passing them as arguments to
-``run-tests.php``. E.g. to test only the Zend engine, the reflection extension and the array functions::
+Test takımının tamamını çalıştırmak yerine, ``run-tests.php``'ye argümanlar şeklinde göndererek belirli dizinlerle
+sınırlayabilirsiniz. Örneğin, sadece Zend motorunu, yansıma uzantısını ve dizi fonksiyonlarını test etmek için:
 
     ~/php-src> sapi/cli/php run-tests.php -P Zend/ ext/reflection/ ext/standard/tests/array/
 
-This is very useful, because it allows you to quickly run only the parts of the test suite that are relevant to your
-changes. E.g. if you are doing language modifications you likely don't care about the extension tests and only want to
-verify that the Zend engine is still working correctly.
+Bu çok kullanışlıdır, çünkü yalnızca test grubunun değişikliklerinizle ilgili kısımlarını hızlıca çalıştırmanıza izin
+verir. Örneğin, dilde değişiklik yapıyorsanız, uzatma testlerini umursamayıp sadece Zend motorunun hala doğru
+çalıştığını doğrulamak istiyorsunuzdur.
 
-You don't need to explicitly use ``run-tests.php`` to pass options or limit directories. Instead you can use the
-``TESTS`` variable to pass additional arguments via ``make test``. E.g. the equivalent of the previous command would
-be::
+Seçenekleri geçmek veya dizinleri sınırlamak için açıkça ``run-tests.php`` kullanmanıza gerek yoktur. Bunun yerine
+``make test`` yoluyla ek argümanlar iletmek için ``TESTS`` değişkenini kullanabilirsiniz. Örneğin bir önceki komutun 
+karşılığı şu şekilde olacaktır::
 
     ~/php-src> make test TESTS="Zend/ ext/reflection/ ext/standard/tests/array/"
 
-We will take a more detailed look at the ``run-tests.php`` system later, in particular also talk about how to write your
-own tests and how to debug test failures.
+``run-tests.php`` sistemini daha sonra detaylı olarak inceleyeceğiz, özellikle kendi testlerinizi nasıl yazacağınız ve
+test hatalarına karşı nasıl bir hata ayıklama yapacağınız hakkında bilgi vereceğiz.
 
 Derleme problemlerini gidermek ve ``make clean`` komutu
 -------------------------------------------------------
 
-As you may know ``make`` performs an incremental build, i.e. it will not recompile all files, but only those ``.c``
-files that changed since the last invocation. This is a great way to shorten build times, but it doesn't always work
-well: For example, if you modify a structure in a header file, ``make`` will not automatically recompile all ``.c``
-files making use of that header, thus leading to a broken build.
+Bildiğiniz gibi, ``make`` artıklı bir derleme yapar, yani tüm dosyaları yeniden derlemez, ancak son çağrılmasından bu
+yana değişen ``.c`` dosyalarını derler. Bu derleme zamanını kısaltmak için harika bir yoldur, ancak her zaman iyi sonuç
+vermez: Örneğin, bir başlık dosyasındaki herhangi bir yapıyı değiştirirseniz, ``make``, tüm ``.c`` dosyalarının
+yapımını otomatik olarak derlemez, böylece kırık bir yapıya yol açar.
 
-If you get odd errors while running ``make`` or the resulting binary is broken (e.g. if ``make test`` crashes it before
-it gets to run the first test), you should try to run ``make clean``. This will delete all compiled objects, thus
-forcing the next ``make`` call to perform a full build.
+Eğer ``make``'i çalıştırırken garip hatalar alırsanız ya da sonuç olarak ortaya çıkan ikili sistem bozulursa (örneğin 
+``make test``, ilk testi çalıştırmadan önce çökerse), ``make clean`` komutunu kullanmalısınız. Bu, derlenmiş tüm
+nesneleri siler, böylece bir sonraki ``make`` çağrısını tam derleme yapmaya zorlar.
 
-Sometimes you also need to run ``make clean`` after changing ``./configure`` options. If you only enable additional
-extensions an incremental build should be safe, but changing other options may require a full rebuild.
+Bazen, ``./configure`` seçeneklerini değiştirdikten sonra ``make clean`` komutunu çalıştırmanız da gerekebilir.
+Yalnızca ek uzantıları etkinleştirirseniz, artımlı bir yapı güvenli olmalıdır, ancak diğer seçenekleri değiştirmek tam
+bir yeniden oluşturma gerektirebilir.
 
-A more aggressive cleaning target is available via ``make distclean``. This will perform a normal clean, but also roll
-back any files brought by the ``./configure`` command invocation. It will delete configure caches, Makefiles,
-configuration headers and various other files. As the name implies this target "cleans for distribution", so it is
-mostly used by release managers.
+Daha agresif bir temizlik ``make distclean`` komutuyla mümkündür. Bu normal bir temizleme gerçekleştirecek, ancak
+``./configure`` komut çağrısı ile getirilen dosyaları da geri alacaktır. Yapılandırma önbelleklerini, Makefiles,
+yapılandırma başlıkları ve diğer çeşitli dosyaları siler. Adından da belli olduğu gibi "dağıtımı temizler", bu nedenle
+çoğunlukla yayın yöneticileri tarafından kullanılır.
 
-Another source of compilation issues is the modification of ``config.m4`` files or other files that are part of the PHP
-build system. If such a file is changed, it is necessary to rerun the ``./buildconf`` script. If you do the modification
-yourself, you will likely remember to run the command, but if it happens as part of a ``git pull`` (or some other
-updating command) the issue might not be so obvious.
+Derleme sorunlarının bir başka kaynağı da ``config.m4`` dosyalarının veya PHP derleme sisteminin bir parçası olan diğer
+dosyaların değiştirilmesidir. Eğer böyle bir dosya değişirse, ``./buildconf`` betiğini yeniden çalıştırmak gerekir.
+Değişikliği kendiniz yaparsanız, muhtemelen komutu çalıştırmayı hatırlayacaksınız, ancak bir `` git pull`` (ya da başka
+bir güncelleme komutunun) parçası olarak gerçekleşirse, komutu çalıştırmayı hatırlamanız zor olabilir.
 
-If you encounter any odd compilation problems that are not resolved by ``make clean``, chances are that running
-``./buildconf --force`` will fix the issue. To avoid typing out the previous ``./configure`` options afterwards, you
-can make use of the ``./config.nice`` script (which contains your last ``./configure`` call)::
+Eğer ``make clean`` ile çözülmeyen herhangi bir garip derleme problemiyle karşılaşırsanız, muhtemelen bu sorunu çözmek
+için ``./buildconf --force`` size bir şans verecektir. Önceki ``./configure`` seçeneklerini sonradan yazmaktan kaçınmak
+için ``./config.nice``  betiğini kullanabilirsiniz (son ``./configure`` çağrınızı içerir)::
 
     ~/php-src> make clean
     ~/php-src> ./buildconf --force
     ~/php-src> ./config.nice
     ~/php-src> make -jN
 
-One last cleaning script that PHP provides is ``./vcsclean``. This will only work if you checked out the source code
-from git. It effectively boils down to a call to ``git clean -X -f -d``, which will remove all untracked files and
-directories that are ignored by git. You should use this with care.
+Son olarak, PHP'nin sağladığı bir diğer temizlik betiği ``./vcsclean``'dir. Bu betik kaynak kodunu git'ten alırsanız
+çalışacaktır. Git tarafından görmezden gelinen tüm izsiz dosyaları ve dizinleri ``git clean -X -f -d`` komutuyla
+kaldırır. Bu yüzden dikkatli kullanmalısınız.

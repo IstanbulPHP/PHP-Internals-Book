@@ -1,5 +1,5 @@
 Yineleyiciler
-=========
+=============
 
 In the last section we implemented a few object handlers to improve integration of typed arrays into the language. One
 aspect is still missing though: Iteration. In this section we'll look at how iterators are implemented internally and
