@@ -1,32 +1,32 @@
 .. highlight:: bash
 
 PHP eklentilerini yapılandırmak
-================================
+===============================
 
-Now that you know how to compile PHP itself, we'll move on to compiling additional extensions. We'll discuss how the
-build process works and what different options are available.
+Artık PHP'nin kendisini nasıl derleyeceğinizi bildiğinize göre, ek uzantıları derlemeye devam edeceğiz. Derleme
+işleminin nasıl çalıştığını ve hangi farklı seçeneklerin mevcut olduğunu tartışacağız.
 
-Loading shared extensions
--------------------------
+Paylaşılan uzantıların yüklenmesi
+---------------------------------
 
-As you already know from the previous section, PHP extensions can be either built statically into the PHP binary, or
-compiled into a shared object (``.so``). Static linkage is the default for most of the bundled extensions, whereas
-shared objects can be created by explicitly passing ``--enable-EXTNAME=shared`` or ``--with-EXTNAME=shared`` to
-``./configure``.
+Önceki bölümden zaten bildiğiniz gibi, PHP uzantıları ya PHP ikili olarak statik olarak oluşturulabilir ya da
+paylaşılan bir nesneye derlenebilir (``.so``). Statik bağlantılama, paketlenmiş uzantıların çoğu için varsayılandır;
+oysa paylaşılan nesneler açıkça ``--enable-EXTNAME=shared`` veya ``--with-EXTNAME=shared`` anahtarları
+``./configure``'a gönderilerek oluşturulabilir.
 
-While static extensions will always be available, shared extensions need to be loaded using the ``extension`` or
-``zend_extension`` ini options [#]_. Both options take either an absolute path to the ``.so`` file or a path relative to
-the ``extension_dir`` setting. (Relative paths for ``zend_extension`` are only available as of PHP 5.5, previously you
-always had to use an absolute path.)
+Statik uzantılar her zaman kullanılabilir olsa da, paylaşılan uzantıların ``extension`` ya da ``zend_extension`` ini
+seçenekleri kullanılarak yüklenmesi gerekir. Her iki seçenek de ``.so`` dosyasına giden mutlak yolu veya
+``extension_dir`` ayarına göre belirtilen bir yolu kullanır. (``zend_extension`` için göreceli(relative) yollar sadece
+PHP 5.5'ten itibaren kullanılabilir, öncesinde mutlak(absolute) yollar kullanmak zorundaydık.)
 
-As an example, consider a PHP build compiled using this configure line::
+Örnek olarak, bu ayar satırı kullanılarak derlenmiş bir PHP yapısını düşünün::
 
     ~/php-src> ./configure --prefix=$HOME/myphp \
                            --enable-debug --enable-maintainer-zts \
                            --enable-opcache --with-gmp=shared
 
-In this case both the opcache extension and GMP extension are compiled into shared objects located in the ``modules/``
-directory. You can load both either by changing the ``extension_dir`` or by passing absolute paths::
+Bu durumda hem opcache hem de GMP eklentileri ``modules/`` dizininde bulunan, paylaşılan nesnelere derlenir. Her
+ikisini de ``extension_dir``'i değiştirerek veya mutlak yolu parametre olarak vererek yükleyebilirsiniz:
 
     ~/php-src> sapi/cli/php -dzend_extension=`pwd`/modules/opcache.so \
                             -dextension=`pwd`/modules/gmp.so
@@ -34,99 +34,100 @@ directory. You can load both either by changing the ``extension_dir`` or by pass
     ~/php-src> sapi/cli/php -dextension_dir=`pwd`/modules \
                             -dzend_extension=opcache.so -dextension=gmp.so
 
-During the ``make install`` step both ``.so`` files will be moved into the extension directory of your PHP installation,
-which you may find using the ``php-config --extension-dir`` command. For the above build options it will be
-``/home/myuser/myphp/lib/php/extensions/no-debug-non-zts-MODULE_API``. This value will also be the default of the
-``extension_dir`` ini option, so you won't have to specify it explicitly and can load the extensions directly::
+``make install`` adımında, her ikisi de ``.so`` dosyaları, PHP kurulumunuzun ``php-config --extension-dir`` komutunu
+kullanarak bulabileceğiniz eklenti dizinine taşınır. Bu dizin, yukarıdaki derleme seçenekleri için
+``/home/myuser/myphp/lib/php/extensions/no-debug-non-zts-MODULE_API`` olacaktır. Bu değer ``extension_dir`` ini
+seçeneğinin de varsayılanı olacaktır, bu nedenle açıkça belirtmeniz gerekmez ve uzantıları doğrudan yükleyebilirsiniz::
 
     ~/myphp> bin/php -dzend_extension=opcache.so -dextension=gmp.so
 
-This leaves us with one question: Which mechanism should you use? Shared objects allow you to have a base PHP binary and
-load additional extensions through the php.ini. Distributions make use of this by providing a bare PHP package and
-distributing the extensions as separate packages. On the other hand, if you are compiling your own PHP binary, you
-likely don't have need for this, because you already know which extensions you need.
+Bu aklımıza şu soruyu getirir: Hangi mekanizmayı kullanmalısın? Paylaşılan nesneler temel bir PHP ikili dosyasına sahip
+olmanıza ve php.ini üzerinden ek uzantılar yüklemenize izin verir. Dağıtımlar bunu, sade bir PHP paketi sağlayarak ve
+uzantıları ayrı paketler olarak dağıtarak kullanır. Öte yandan, kendi PHP ikili kodunuzu derliyorsanız, buna ihtiyaç
+duymazsınız, çünkü hangi uzantılara ihtiyacınız olduğunu zaten biliyorsunuz.
 
-As a rule of thumb, you'll use static linkage for the extensions bundled by PHP itself and use shared extensions for
-everything else. The reason is simply that building external extensions as shared objects is easier (or at least less
-intrusive), as you will see in a moment. Another benefit is that you can update the extension without rebuilding PHP.
+Genel bir kural olarak, PHP'nin kendisi tarafından paketlenen uzantılar için statik bağlantı kullanacak ve diğer
+her şey için paylaşılan uzantıları kullanacaksınız. Bunun nedeni, gördüğünüz gibi, harici uzantıları paylaşılan
+nesneler olarak oluşturmanın daha kolay (veya en azından daha az müdahaleci) olmasıdır. Diğer bir avantaj ise, PHP'yi
+yeniden oluşturmadan eklentiyi güncelleyebilmenizdir.
 
-.. [#] We'll explain the difference between a "normal" extension and a Zend extension later in the book. For now it
-       suffices to know that Zend extensions are more "low level" (e.g. opcache or xdebug) and hook into the workings of
-       the Zend Engine itself.
+.. [#] Kitapta daha sonra "normal" bir uzantı ile Zend uzantısı arasındaki farktan bahsedeceğiz. Şimdilik, Zend
+       uzantılarının daha "düşük seviye" (örneğin opcache veya xdebug) olduğunu bilmek ve Zend Engine'in kendi
+       çalışmalarına bağlanmak yeterli gelecektir.
 
-Installing extensions from PECL
--------------------------------
+PECL'den uzantı yükleme
+-----------------------
 
-PECL_, the *PHP Extension Community Library*, offers a large number of extensions for PHP. When extensions are removed
-from the main PHP distribution, they usually continue to exist in PECL. Similarly many extensions that are now bundled
-with PHP were previously PECL extensions.
+PECL_, *PHP Extension Community Library*, PHP için çok sayıda uzantı sunar. Uzantılar ana PHP dağıtımından
+kaldırıldığında, genellikle PECL'de var olmaya devam ederler. Benzer şekilde, şimdi PHP ile birlikte gelen birçok
+uzantı daha önce PECL uzantılarıydı.
 
-Unless you specified ``--without-pear`` during the configuration stage of your PHP build, ``make install`` will download
-and install PECL as a part of PEAR. You will find the ``pecl`` script in the ``$PREFIX/bin`` directory. Installing
-extensions is now as simple as running ``pecl install EXTNAME``, e.g.::
+PHP derlemenizin konfigürasyon aşamasında ``--without-pear`` anahtarını belirtmediyseniz, ``make install`` PEAR'ın bir
+parçası olarak PECL'yi indirip yükleyecektir. ``pecl`` betiğini ``$PREFIX/bin`` dizininde bulabilirsiniz. Eklentileri
+yüklemek son derece basittir, ``pecl install EXTNAME``, Örneğin::
 
     ~/myphp> bin/pecl install apcu-4.0.2
 
-This command will download, compile and install the APCu_ extension. The result will be a ``apcu.so`` file in your
-extension directory, which can then be loaded by passing the ``extension=apcu.so`` ini option.
+Bu komut APCu_ uzantısını indirecek, derleyecek ve yükleyecektir. Sonuç, uzantı dizininizde bir  ``apcu.so`` dosyası
+olacaktır; bu, ``extension=apcu.so`` ini 'seçeneğinin kullanılmasıyla yüklenebilir.
 
-While ``pecl install`` is very handy for the end-user, it is of little interest to extension developers. In the
-following, we'll describe two ways to manually build extensions: Either by importing it into the main PHP source tree
-(this allows static linkage) or by doing an external build (only shared).
+ ``pecl install``, son kullanıcılar için çok kullanışlı olsa da, eklenti geliştiricilerinin ilgisini çekmiyor. Aşağıda,
+ uzantıları manuel olarak oluşturmanın iki yolunu açıklayacağız: Ya ana PHP kaynak ağacına alarak (bu statik bağlantıya
+ izin verir) ya da harici bir derleme yaparak (yalnızca paylaşılan).
 
 .. _PECL: http://pecl.php.net
 .. _APCu: http://pecl.php.net/package/APCu
 
-Adding extensions to the PHP source tree
-----------------------------------------
+PHP kaynak ağacına uzantı ekleme
+--------------------------------
 
-There is no fundamental difference between a third-party extension and an extension bundled with PHP. As such you can
-build an external extension simply by copying it into the PHP source tree and then using the usual build procedure.
-We'll demonstrate this using APCu as an example.
+Üçüncü taraf bir uzantı ile PHP ile birlikte gelen bir uzantı arasında temel bir fark yoktur. Böylece harici bir
+eklentiyi PHP kaynak ağacına kopyalayarak ve daha sonra normal derleme prosedürünü kullanarak oluşturabilirsiniz. Bunun
+örneğini APCu'yu kullanarak göstereceğiz.
 
-First of all, you'll have to place the source code of the extension into the ``ext/EXTNAME`` directory of your PHP
-source tree. If the extension is available via git, this is as simple as cloning the repository from within ``ext/``::
+Öncelikle, uzantının kaynak kodunu PHP kaynak ağacınızın ``ext/EXTNAME`` dizinine yerleştirmeniz gerekir. Uzantı git
+üzerinde mevcutsa, bu, depoyu ``ext/`` içinden klonlamak kadar basittir::
 
     ~/php-src/ext> git clone https://github.com/krakjoe/apcu.git
 
-Alternatively you can also download a source tarball and extract it::
+Alternatif olarak, bir kaynak tarball'ı indirebilir ve çıkarabilirsiniz::
 
     /tmp> wget http://pecl.php.net/get/apcu-4.0.2.tgz
     /tmp> tar xzf apcu-4.0.2.tgz
     /tmp> mkdir ~/php-src/ext/apcu
     /tmp> cp -r apcu-4.0.2/. ~/php-src/ext/apcu
 
-The extension will contain a ``config.m4`` file, which specifies extension-specific build instructions for use by
-autoconf. To incorporate them into the ``./configure`` script, you'll have to run ``./buildconf`` again. To ensure that
-the configure file is really regenerated, it is recommended to delete it beforehand::
+Uzantı, autoconf tarafından kullanılacak uzantıya özgü derleme talimatlarını belirten bir ``config.m4`` dosyası
+içerecektir. Onları ``./configure``  betiğine dahil etmek için yeniden ``./buildconf``'u çalıştırmanız gerekir.
+Konfigürasyon dosyasının gerçekten yenilenmesini sağlamak için, önceden silmeniz önerilir::
 
     ~/php-src> rm configure && ./buildconf --force
 
-You can now use the ``./config.nice`` script to add APCu to your existing configuration or start over with a completely
-new configure line::
+Şimdi mevcut yapılandırmanıza APCu eklemek için ``./config.nice`` komut dosyasını kullanabilir veya tamamen yeni bir
+yapılandırma satırıyla başlayabilirsiniz::
 
     ~/php-src> ./config.nice --enable-apcu
     # or
     ~/php-src> ./configure --enable-apcu # --other-options
 
-Finally run ``make -jN`` to perform the actual build. As we didn't use ``--enable-apcu=shared`` the extension is
-statically linked into the PHP binary, i.e. no additional actions are needed to make use of it. Obviously you can also
-use ``make install`` to install the resulting binaries.
+Sonunda asıl yapıyı oluşturmak için ``make -jN`` komutunu çalıştırın. ``--enable-apcu=shared`` anahtarını
+kullanmadığımız için, uzantı statik olarak PHP ikilisi ile bağlantılıdır, yani kullanımı için ek bir işlem yapmanıza
+gerek yoktur. Ortaya çıkan ikili dosyaları yüklemek için ``make install`` komutunu da kullanabilirsiniz.
 
-Building extensions using ``phpize``
-------------------------------------
+``phpize`` kullanarak eklenti oluşturma
+---------------------------------------
 
-It is also possible to build extensions separately from PHP by making use of the ``phpize`` script that was already
-mentioned in the :ref:`building_php` section.
+Ayrıca :ref:`building_php` bölümünde daha önce bahsedilen ``phpize`` komut dosyasını kullanarak PHP'den ayrı uzantılar
+oluşturmak da mümkündür.
 
-``phpize`` plays a similar role as the ``./buildconf`` script used for PHP builds: First it will import the PHP build
-system into your extension by copying files from ``$PREFIX/lib/php/build``. Among these files are ``acinclude.m4``
-(PHP's M4 macros), ``phpize.m4`` (which will be renamed to ``configure.in`` in your extension and contains the main
-build instructions) and ``run-tests.php``.
+``phpize``, PHP için kullanılan ``./buildconf`` betiği ile benzer bir rol oynar: İlk olarak, PHP yapılandırma
+sistem dosyalarınızı ``$PREFIX/lib/php/build`` dizininden kopyalayarak eklentinize dahil edecektir. Bu dosyalar
+arasında ``acinclude.m4`` (PHP'nin M4 makroları), ``phpize.m4`` (``configure.in`` olarak değiştirilecek ve ana derleme
+talimatlarını içeren dosya) ve ``run-tests.php`` gibi dosyalar bulunur.
 
-Then ``phpize`` will invoke autoconf to generate a ``./configure`` file, which can be used to customize the extension
-build. Note that it is not necessary to pass ``--enable-apcu`` to it, as this is implicitly assumed. Instead you should
-use ``--with-php-config`` to specify the path to your ``php-config`` script::
+Ardından ``phpize``, uzantı yapısını özelleştirmek için kullanılan bir ``./configure`` dosyası oluşturmak için
+autoconf'u çağırır. Burada “--enable-apcu” komutunu iletmek gerekli değildir. Bunun yerine `` --with-php-config``,
+ve `` php-config`` anahtarlarını scriptinizin yolunu belirtmek için kullanmalısınız.
 
     /tmp/apcu-4.0.2> ~/myphp/bin/phpize
     Configuring for:
@@ -137,30 +138,30 @@ use ``--with-php-config`` to specify the path to your ``php-config`` script::
     /tmp/apcu-4.0.2> ./configure --with-php-config=$HOME/myphp/bin/php-config
     /tmp/apcu-4.0.2> make -jN && make install
 
-You should always specify the ``--with-php-config`` option when building extensions (unless you have only a single,
-global installation of PHP), otherwise ``./configure`` will not be able to correctly determine what PHP version and
-flags to build against. Specifying the ``php-config`` script also ensures that ``make install`` will move the generated
-``.so`` file (which can be found in the ``modules/`` directory) to the right extension directory.
+Eklentileri oluştururken, daima ``--with-php-config`` anahtarını belirtmelisiniz (PHP'nin tek bir global kurulumuna
+sahip değilseniz), aksi takdirde ``./configure`` hangi PHP sürümünün ve bayraklarının oluşturulacağını doğru bir
+şekilde belirleyemez. ``php-config`` betiğini belirtmek aynı zamanda ``make install``'ın oluşturmuş olduğu ``.so``
+dosyasını (``/`` dizini içinde bulabileceğiniz) doğru eklenti dizinine taşımasını sağlar. ``run-tests.php`` dosyası
+``phpize`` aşamasında da kopyalandığından, uzantı testlerini ``make test`` (veya testleri çalıştırmak için açık bir
+çağrı) kullanarak çalıştırabilirsiniz.
 
-As the ``run-tests.php`` file was also copied during the ``phpize`` stage, you can run the extension tests using
-``make test`` (or an explicit call to run-tests).
+Derlenmiş nesnelerin kaldırılması için ``make clean`` komutu da mevcuttur ve artımlı derleme bir değişiklikten sonra
+başarısız olursa, uzantının tamamını yeniden oluşturmaya zorlamanıza izin verir. Ek olarak phpize ``phpize --clean``
+komutu üzerinden bir temizlik seçeneği sunar. Bu, ``phpize`` ile içeri alınan tüm dosyaları ve ``/configure`` betiği
+ile oluşturulan dosyaları kaldıracaktır.
 
-The ``make clean`` target for removing compiled objects is also available and allows you to force a full rebuild of
-the extension, should the incremental build fail after a change. Additionally phpize provides a cleaning option via
-``phpize --clean``. This will remove all the files imported by ``phpize``, as well as the files generated by the
-``/configure`` script.
+Uzantılarla ilgili bilgileri görüntüleme
+----------------------------------------
 
-Displaying information about extensions
----------------------------------------
-
-The PHP CLI binary provides several options to display information about extensions. You already know ``-m``, which will
-list all loaded extensions. You can use it to verify that an extension was loaded correctly::
+PHP CLI ikilisi(binary), uzantılar hakkında bilgi görüntülemek için çeşitli seçenekler sunar. Yüklü tüm uzantıları
+listeleyecek olan ``-m`` parametresini zaten biliyorsunuz. Bunu aynı zamanda bir uzantının doğru yüklendiğini
+doğrulamak için de kullanabilirsiniz::
 
     ~/myphp/bin> ./php -dextension=apcu.so -m | grep apcu
     apcu
 
-There are several further switches beginning with ``--r`` that expose Reflection functionality. For example you can use
-``--ri`` to display the configuration of an extension::
+Reflection işlevini ortaya çıkaran ``--r`` ile başlayan birkaç anahtar daha var. Örneğin, bir uzantı yapılandırmasını
+görüntülemek için ``--ri`` kullanabilirsiniz::
 
     ~/myphp/bin> ./php -dextension=apcu.so --ri apcu
     apcu
@@ -183,7 +184,7 @@ There are several further switches beginning with ``--r`` that expose Reflection
     apc.ttl => 0 => 0
     # ...
 
-The ``--re`` switch lists all ini settings, constants, functions and classes added by an extension:
+``--re`` anahtarı, bir uzantı tarafından eklenen tüm dahili ayarları, sabitleri, işlevleri ve sınıfları listeler:
 
 .. code-block:: none
 
@@ -215,16 +216,15 @@ The ``--re`` switch lists all ini settings, constants, functions and classes add
       }
     }
 
-The ``--re`` switch only works for normal extensions, Zend extensions use ``--rz`` instead. You can try this on
-opcache::
+``--re`` anahtarı yalnızca normal uzantılar için çalışır, Zend uzantıları için bunun yerine ``--rz`` kullanılır. Bunu
+opcache'de deneyebilirsiniz::
 
     ~/myphp/bin> ./php -dzend_extension=opcache.so --rz "Zend OPcache"
     Zend Extension [ Zend OPcache 7.0.3-dev Copyright (c) 1999-2013 by Zend Technologies <http://www.zend.com/> ]
 
-As you can see, this doesn't display any useful information. The reason is that opcache registers both a normal
-extension and a Zend extension, where the former contains all ini settings, constants and functions. So in this
-particular case you still need to use ``--re``. Other Zend extensions make their information available via ``--rz``
-though.
+Gördüğünüz gibi, bu herhangi bir faydalı bilgi göstermiyor. Bunun nedeni, opcache’in hem normal bir uzantıyı hem de
+Zend uzantısını kaydetmesidir; burada, önceki tüm ini ayarları, sabitleri ve işlevleri içerir. Yani bu özel durumda
+hala ``--re`` kullanmanız gerekir. Diğer Zend uzantıları, bilgilerini ``--rz`` yoluyla da sağlar.
 
 ..
     nikic: Commented out for now. building_php.rst already mentions ABI incompatibility for zts / debug / api version.

@@ -1,13 +1,12 @@
 Sihirli arayüzler - Karşılaştırılabilir
 =======================================
 
-Internal interfaces in PHP are very similar to their userland equivalents. The only notable difference is that internal
-interfaces have the additional possibility of specifying a handler that is executed when the interface is implemented.
-This feature can be used for various purposes like enforcing additional constraints or replacing handlers. We'll make
-use of it to implement a "magic" ``Comparable`` interface, which exposes the internal ``compare_objects`` handler to
-userland.
+PHP'deki dahili arayüzler, kullanıcı eşdeğerlerine çok benzer. Tek önemli fark, iç arayüzlerin, arayüz uygulandığında
+yürütülen bir işleyiciyi belirtme ihtimaline sahip olmasıdır. Bu özellik, ek kısıtlamalar uygulamak veya işleyicileri
+değiştirmek gibi çeşitli amaçlar için kullanılabilir. Bunu, iç ``compare_objects`` işleyicisini kullanıcı alanına
+gösteren "büyülü" ``Comparable`` arayüzünü uygulamak için kullanacağız.
 
-The interface itself will look as follows:
+Arayüzün kendisi aşağıdaki gibidir::
 
 .. code-block:: php
 
@@ -15,7 +14,7 @@ The interface itself will look as follows:
         static function compare($left, $right);
     }
 
-First, let's register this new interface in ``MINIT``::
+Öncelikle bu yeni arayüzü ``MINIT``'a kaydedelim::
 
     zend_class_entry *comparable_ce;
 
@@ -40,10 +39,10 @@ First, let's register this new interface in ``MINIT``::
         return SUCCESS;
     }
 
-Note that in this case we can't use ``PHP_ABSTRACT_ME``, because it does not support static abstract methods. Instead
-we have to use the low-level ``ZEND_FENTRY`` macro.
+Bu durumda ``PHP_ABSTRACT_ME`` kullanamayacağımıza dikkat edin, çünkü statik soyut yöntemleri desteklemiyor. Bunun
+yerine, düşük seviyeli ``ZEND_FENTRY`` makrosunu kullanmalıyız.
 
-Next we implement the ``interface_gets_implemented`` handler::
+Sonrasında ``interface_gets_implemented`` işleyicisini uyguluyoruz::
 
     static int implement_comparable(zend_class_entry *interface, zend_class_entry *ce TSRMLS_DC)
     {
@@ -59,13 +58,13 @@ Next we implement the ``interface_gets_implemented`` handler::
     // in MINIT
     comparable_ce->interface_gets_implemented = implement_comparable;
 
-When the interface is implemented the ``implement_comparable`` function will be called. In this function we override the
-classes ``create_object`` handler. To simplify things we only allow the interface to be used when ``create_object``
-was ``NULL`` previously (i.e. it is a "normal" userland class). We could obviously also make this work with arbitrary
-classes by backing up the old ``create_object`` handler somewhere.
+Arayüz uygulandığında, ``implement_comparable`` işlevi çağrılacaktır. Bu fonksiyonda ``create_object`` işleyicisinin
+sınıflarını geçersiz kılıyoruz. İşleri kolaylaştırmak için, arayüzün sadece ``create_object`` ``NULL`` iken
+kullanılmasına izin veriyoruz ("normal" bir kullanıcı sınıfıdır). Eski ``create_object`` işleyicisini bir yerde
+yedekleyerek bu çalışma üzerinde farklı denemeler de yapabiliriz.
 
-In our ``create_object`` override we create the object as usual but assign our own handlers structure with a custom
-``compare_objects`` handler::
+Bizim ``create_object`` geçersiz kılmamızda, nesneyi her zamanki gibi oluştururuz ancak kendi işleyici yapımızı özel
+bir ``compare_objects`` işleyici ile atarız::
 
     static zend_object_handlers comparable_handlers;
 
@@ -86,11 +85,12 @@ In our ``create_object`` override we create the object as usual but assign our o
     memcpy(&comparable_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
     comparable_handlers.compare_objects = comparable_compare_objects;
 
-Lastly we have to implement the custom comparison handler. It will call the ``compare`` method using the
-``zend_call_method_with_2_params`` macro, which is defined in ``zend_interfaces.h``. One question that arises is which
-class the method should be called on. For this implementation we'll simply use the first passed object, though this is
-just an arbitrary choice. In practice this means that for ``$left < $right`` the class of ``$left`` will be used, but
-for ``$left > $right`` the class of ``$right`` is used (because PHP transforms the ``>`` to a ``<`` operation).
+Son olarak, özel karşılaştırma işleyicisini uygulamak zorundayız. Bu, ``zend_call_method_with_2_params`` makrosunu
+kullanarak, ``zend_interfaces.h`` içinde tanımlanan ``compare`` yöntemini çağırır. Bunun sonucunda akıllara, yöntemin
+hangi sınıfa çağrılması gerektiği sorusu gelir. Bu uygulama için ilk geçirilen nesneyi kullanacağız, ancak bu sadece
+isteğe bağlı bir seçimdir. Bu, ``$left < $right`` için ``$left`` sınıfının kullanılacağı, ancak
+``$left > $right`` için ``$right`` sınıfının kullanıldığı anlamına gelir. (Çünkü PHP ``>`` işlemini ``<``işlemine
+dönüştürür.)
 
 ::
 
@@ -117,10 +117,9 @@ for ``$left > $right`` the class of ``$right`` is used (because PHP transforms t
         return result;
     }
 
-The ``ZEND_NORMALIZE_BOOL`` macro used above normalizes the returned integer to ``-1``, ``0`` and ``1``.
+Yukarıda kullanılan ``ZEND_NORMALIZE_BOOL`` makrosu, döndürülen tamsayıyı ``-1``, ``0`` ve ``1`` olarak normalleştirir.
 
-And that's all it takes. Now we can try out the new interface (sorry if the example doesn't make particularly much
-sense):
+Ve hepsi bu. Şimdi yeni arayüzü deneyebiliriz (örnek mantıklı gelmiyorsa üzgünüm):
 
 .. code-block:: php
 
